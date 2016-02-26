@@ -10,12 +10,13 @@ function directiveFunction(){
         controller: 'MessengerController',
         controllerAs: 'vm',
         bindToController: true,
-        templateUrl: '/client',
+        templateUrl: '/messenger',
     }
 }
 
 function ControllerFunction(){
     var vm = this;
+    // var myDataRef = new Firebase('https://blinding-torch-7293.firebaseio.com/');
 
     vm.formData = {
         message: ''
