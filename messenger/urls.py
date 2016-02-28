@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^authenticate$', views.Authenticate.as_view(), name='authenticate'),
     url(r'^logout$', views.Logout.as_view(), name='logout'),
     url(r'^register$', views.Register.as_view(), name='register'),
+    url(r'^message$', views.Message.as_view(), name='message'),
 
     # page partials
     url(r'^partials/home$', TemplateView.as_view(template_name='partials/home.html')),

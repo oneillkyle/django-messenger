@@ -2,18 +2,22 @@
     <div class="col-xs-12">
         <form>
             <div class="form-group">
-                <ul class="panel">
-                    new messages
+                <ul class="panel list-group" ng-click="vm.selectUser(user.username)">
+                    <li ng-repeat="message in vm.messages.currentMessages()" ng-class="{sent:message.sent}" class="list-group-item">
+                        <span ng-bind="message.sent_at | date: 'short'"></span>:
+                        <span ng-bind="message.message"></span>
+                    </li>
                 </ul>
 
-                <label for="message">Message</label>
+                <label for="message" ng-click="vm.sendMessage()">Message</label>
                 <span class="input-group">
                     <input type="text" class="form-control" id="message" placeholder="Messsage" ng-model="vm.formData.message">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="button">Send</button>
-                      </span>
+                        <button class="btn btn-primary" ng-click="vm.sendMessage()">Send</button>
+                    </span>
                 </span>
             </div>
+
         </form>
     </div>
 </div>

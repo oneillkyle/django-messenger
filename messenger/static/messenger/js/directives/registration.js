@@ -1,36 +1,38 @@
 'use strict';
+(function() {
+    angular.module('messenger')
+        .directive('registration', directiveFunction)
+        .controller('RegistrationController', ControllerFunction);
 
-angular.module('messenger')
-    .directive('registration', directiveFunction)
-    .controller('RegistrationController', ControllerFunction);
-
-function directiveFunction() {
-    return {
-        restrict: 'E',
-        controller: 'RegistrationController',
-        controllerAs: 'vm',
-        bindToController: true,
-        templateUrl: '/partials/registration',
+    function directiveFunction() {
+        return {
+            restrict: 'E',
+            scope: {},
+            controller: 'RegistrationController',
+            controllerAs: 'vm',
+            bindToController: true,
+            templateUrl: '/partials/registration',
+        }
     }
-}
 
-ControllerFunction.$inject = ['$http', 'authService'];
+    ControllerFunction.$inject = ['$http', 'authService', '$state'];
 
-function ControllerFunction($http, authService) {
-    var vm = this;
+    function ControllerFunction($http, authService, $state) {
+        var vm = this;
+        vm.formData = {};
+        vm.errors = [];
 
-    _.extend(vm, {
-        auth: authService
-    });
-
-    // $http({
-    //     method: 'GET',
-    //     url: '/user_list'
-    // }).then(function successCallback(response) {
-    //     vm.users = response.data.users;
-    // }, function errorCallback(response) {
-    //     console.log(response);
-    // });
-
-    console.log(vm);
-}
+        _.extend(vm, {
+            register: function() {
+                authService.register(vm.formData).then(function(response) {
+                    if (response.created) {
+                        $state.go('home');
+                    } else {
+                        vm.errors = response.errors;
+                    }
+                    console.log(response);
+                });
+            }
+        });
+    }
+})();

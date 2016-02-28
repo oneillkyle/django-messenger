@@ -10,8 +10,10 @@
         <script src='https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.js'></script>
 
         {% load staticfiles %}
+        <link rel="stylesheet" href="{% static "messenger/css/app.css"%}">
+
         <script src="{% static "messenger/js/app.js"%}"></script>
-        <link rel="stylesheet" href="{% static "messenger/css/app.css"%}"></script>
+        <script src="{% static "messenger/js/controllers/nav.js"%}"></script>
         <script src="{% static "messenger/js/directives/messenger.js"%}"></script>
         <script src="{% static "messenger/js/directives/registration.js"%}"></script>
         <script src="{% static "messenger/js/directives/login.js"%}"></script>
@@ -19,8 +21,8 @@
         <script src="{% static "messenger/js/services/message.js"%}"></script>
         <script src="{% static "messenger/js/services/auth.js"%}"></script>
     </head>
-    <body>
-        <nav class="navbar navbar-default">
+    <body>{%csrf_token%}
+        <nav class="navbar navbar-default" ng-controller="NavController">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
@@ -40,6 +42,9 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li>
                             <a ui-sref="login">Login</a>
+                        </li>
+                        <li>
+                            <a ng-click="logout()">Logout</a>
                         </li>
                     </ul>
                 </div>

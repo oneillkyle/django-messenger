@@ -1,9 +1,9 @@
 <div class="row">
     <div class="col-xs-12">
         <h2>Users</h2>
-        <ul>
-            <li ng-repeat="user in vm.users">
-                <div ng-bind="user.email"></div>
+        <ul class="list-group">
+            <li ng-repeat="user in vm.users" class="list-group-item" ng-class="{active:user.username === vm.selectedUser()}">
+                <div ng-bind="user.username" ng-click="vm.selectUser(user.username)"></div>
             </li>
         </ul>
     </div>
