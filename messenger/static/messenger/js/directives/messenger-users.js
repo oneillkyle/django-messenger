@@ -4,23 +4,33 @@ angular.module('messenger')
     .directive('messengerUsers', directiveFunction)
     .controller('MessengerUsersController', ControllerFunction);
 
-function directiveFunction(){
+function directiveFunction() {
     return {
         restrict: 'E',
         controller: 'MessengerUsersController',
         controllerAs: 'vm',
         bindToController: true,
-        templateUrl: '/users',
+        templateUrl: '/partials/users',
     }
 }
 
-function ControllerFunction(){
+ControllerFunction.$inject = ['$http'];
+
+function ControllerFunction($http) {
     var vm = this;
 
-    _.extend(vm,{
-        users: [
-            {name: 'Test'}
-        ]
+    _.extend(vm, {
+        users: []
     });
+
+    $http({
+        method: 'GET',
+        url: '/user_list'
+    }).then(function successCallback(response) {
+        vm.users = response.data.users;
+    }, function errorCallback(response) {
+        console.log(response);
+    });
+
     console.log(vm);
 }

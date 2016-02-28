@@ -10,7 +10,7 @@ function directiveFunction(){
         controller: 'MessengerController',
         controllerAs: 'vm',
         bindToController: true,
-        templateUrl: '/messenger',
+        templateUrl: '/partials/messenger',
     }
 }
 
