@@ -37,8 +37,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ws4redis',
     'messenger',
 ]
+
+# This setting is required to override the Django's main loop, when running in
+# development mode, such as ./manage runserver
+
+# URL that distinguishes websocket connections from normal requests
+WEBSOCKET_URL = '/ws/'
+
+WS4REDIS_PREFIX = 'ws'
+
+# Set the number of seconds each message shall persited
+WS4REDIS_EXPIRE = 0
+
+# WS4REDIS_HEARTBEAT = '--heartbeat--'
+
+# WS4REDIS_SUBSCRIBER = 'app.redis_store.RedisSubscriber'
+
+WS4REDIS_CONNECTION = {
+    'host': '127.0.0.1',
+    'port': 6379,
+}
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -64,13 +85,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.core.context_processors.static',
+                'ws4redis.context_processors.default'
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'app.wsgi.application'
 
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases

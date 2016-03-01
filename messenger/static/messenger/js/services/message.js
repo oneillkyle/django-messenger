@@ -3,14 +3,13 @@
     angular.module('messenger')
         .service('messageService', serviceFunction);
 
-    serviceFunction.$inject = ['$http'];
+    serviceFunction.$inject = ['$http', '$timeout'];
 
-    function serviceFunction($http) {
-        var selectedUser, messages;
+    function serviceFunction($http, $timeout) {
+        var selectedUser, messages, ws;
 
         this.setUser = function(user) {
             selectedUser = user;
-            console.log(selectedUser);
         }
 
         this.selectedUser = function(){
@@ -30,7 +29,6 @@
                     message: message
                 }
             }).then(function successCallback(response) {
-                console.log(response);
                 return response;
             }, function errorCallback(response) {
                 console.log(response);
@@ -38,12 +36,32 @@
         }
 
         this.getMessages = function() {
+            if(ws){
+                ws.close();
+            }
+
             return $http({
                 method: 'GET',
                 url: '/message?username=' + selectedUser
             }).then(function successCallback(response) {
-                console.log(response);
                 messages = response.data.messages;
+
+                ws = new WebSocket('ws://127.0.0.1:8000/ws/messages?subscribe-user');
+
+                ws.onmessage = function(e) {
+                    var data = JSON.parse(e.data);
+                    data.sent = selectedUser !== data.sender;
+                    $timeout(function(){
+                        messages.push(data);
+                        while(messages.length > 10){
+                            messages.shift();
+                        }
+                    });
+                };
+                ws.onerror = function(e) {
+                    console.error(e);
+                };
+
                 return messages;
             }, function errorCallback(response) {
                 console.log(response);

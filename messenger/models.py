@@ -11,4 +11,4 @@ class Message(models.Model):
     sent_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['sent_at']
+        ordering = ['-sent_at']

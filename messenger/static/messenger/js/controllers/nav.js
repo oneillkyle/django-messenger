@@ -11,4 +11,6 @@ function ControllerFunction($scope, $http, authService, $state) {
             $state.go('login');
         });
     }
+
+    $scope.isAuthenticated = authService.getAuthenticated;
 }

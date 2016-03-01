@@ -10,24 +10,42 @@ from django.forms.models import model_to_dict
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.db.models import Q
+from django.core.serializers.json import DjangoJSONEncoder
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 from messenger.models import Message as MessageModel
+from messenger.forms import MessageForm
 
 class Index(TemplateView):
     template_name = "index.html"
 
 class Message(View):
-    def get(self, request, *args, **kwars):
+    def get(self, request, *args, **kwargs):
         messages = MessageModel.objects.filter(
             Q(sender=request.user, receiver__username=request.GET.get('username')) | Q(receiver=request.user, sender__username=request.GET.get('username'))
-        )
+        )[:10][::-1]
         response = [{'message': m.message, 'sent_at': m.sent_at, 'sent': m.sender.id == request.user.id or False} for m in messages]
         return JsonResponse({'messages': response})
 
-    def post(self, request, *args, **kwars):
+    def post(self, request, *args, **kwargs):
         post_data = json.loads(request.body)
-        receiver = User.objects.get(username=post_data.get('username'))
-        message = MessageModel.objects.create(sender=request.user, receiver=receiver, message=post_data.get('message'))
+        form = MessageForm(post_data)
+        if form.is_valid():
+            receiver = User.objects.get(username=form.cleaned_data['username'])
+            message = MessageModel.objects.create(sender=request.user, receiver=receiver, message=form.cleaned_data['message'])
+        else:
+            response = JsonResponse({})
+            response.status_code = 500
+            return response
+
+        redis_publisher = RedisPublisher(facility='messages', users=[request.user.username, receiver.username])
+        redis_json = json.dumps({
+            'message':message.message,
+            'sent_at':message.sent_at,
+            'sender': message.sender.username}, cls=DjangoJSONEncoder)
+        redis_message = RedisMessage(str(redis_json))
+        redis_publisher.publish_message(redis_message)
         return JsonResponse(model_to_dict(message))
 
 
@@ -36,7 +54,6 @@ class UserList(View):
         users = {
             'users': [{'username': user.username} for user in User.objects.all().exclude(username=request.user.username)]
         }
-        # susers = serializers.serialize("json", users)
         return JsonResponse(users)
 
 class Authenticate(View):
@@ -46,13 +63,15 @@ class Authenticate(View):
         return JsonResponse(response)
 
     def post(self, request, *args, **kwargs):
+        data = {}
         post_data = json.loads(request.body) if request.body else {}
-        username = post_data.get('username')
-        password = post_data.get('password')
-        user = authenticate(username=username, password=password)
+        form = AuthenticationForm(request, post_data)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+        else:
+            user = None
 
         status_code = 401
-        data = {}
         if user is not None:
             if user.is_active:
                 login(request, user)

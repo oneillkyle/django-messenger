@@ -1,8 +1,24 @@
 #banner {
     margin-bottom: 50px;
+    background-color: #78CECE;
+    height: 180px;
+}
+#banner header{
+    text-align: center;
+    margin-top: 30px;
+}
+#message-window .sent {
+    text-align: right;
 }
 
-.sent{
+#message-window .message {
+    color: #337ab7;
+}
+
+#message-window .sent .message {
     color: #3c763d;
-    text-align: right;
+}
+
+.user-select{
+    cursor: pointer;
 }

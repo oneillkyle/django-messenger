@@ -21,6 +21,10 @@
             });
         }
 
+        this.getAuthenticated = function(){
+            return authenticated;
+        }
+
         this.login = function(credentials) {
             return $http({
                 method: 'POST',

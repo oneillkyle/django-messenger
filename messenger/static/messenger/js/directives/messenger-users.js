@@ -43,7 +43,5 @@
         }, function errorCallback(response) {
             console.log(response);
         });
-
-        console.log(vm);
     }
 })();

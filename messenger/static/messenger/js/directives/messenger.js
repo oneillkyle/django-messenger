@@ -24,20 +24,15 @@
             formData: {
                 message: ''
             },
-            messages: messageService
-        });
-
-        vm.sendMessage = function() {
-                console.log('click');
+            messages: messageService.currentMessages,
+            sendMessage: function() {
                 if (!vm.formData.message) {
                     return;
                 }
                 messageService.sendMessage(vm.formData.message).then(function(response) {
-                    console.log(response);
                     vm.formData.message = '';
                 });
-            },
-
-            console.log(vm);
+            }
+        });
     }
 })();

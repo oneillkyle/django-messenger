@@ -1,17 +1,18 @@
 <div class="row">
     <div class="col-xs-12">
+        <h2>Messages</h2>
+        <ul class="panel list-group" id="message-window">
+            <li ng-repeat="message in vm.messages()" ng-class="{sent:message.sent}" class="list-group-item">
+                <span ng-bind="message.sent_at | date: 'short'"></span>:
+                <span ng-bind="message.message" class="message"></span>
+            </li>
+        </ul>
+
         <form>
             <div class="form-group">
-                <ul class="panel list-group" ng-click="vm.selectUser(user.username)">
-                    <li ng-repeat="message in vm.messages.currentMessages()" ng-class="{sent:message.sent}" class="list-group-item">
-                        <span ng-bind="message.sent_at | date: 'short'"></span>:
-                        <span ng-bind="message.message"></span>
-                    </li>
-                </ul>
-
-                <label for="message" ng-click="vm.sendMessage()">Message</label>
+                <!-- <label for="message">Message</label> -->
                 <span class="input-group">
-                    <input type="text" class="form-control" id="message" placeholder="Messsage" ng-model="vm.formData.message">
+                    <input type="text" class="form-control" id="message" placeholder="Send a Messsage" ng-model="vm.formData.message" maxlength="250" required>
                     <span class="input-group-btn">
                         <button class="btn btn-primary" ng-click="vm.sendMessage()">Send</button>
                     </span>
